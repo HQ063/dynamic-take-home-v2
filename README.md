@@ -1,112 +1,66 @@
-> The example repository is maintained from a [monorepo](https://github.com/nextauthjs/next-auth/tree/main/apps/examples/nextjs). Pull Requests should be opened against [`nextauthjs/next-auth`](https://github.com/nextauthjs/next-auth).
+# Dynamic Take Home Challenge
 
-<p align="center">
-   <br/>
-   <a href="https://authjs.dev" target="_blank"><img width="150px" src="https://authjs.dev/img/logo/logo-sm.png" /></a>
-   <h3 align="center">NextAuth.js Example App</h3>
-   <p align="center">
-   Open Source. Full Stack. Own Your Data.
-   </p>
-   <p align="center" style="align: center;">
-      <a href="https://npm.im/next-auth">
-        <img alt="npm" src="https://img.shields.io/npm/v/next-auth?color=green&label=next-auth">
-      </a>
-      <a href="https://bundlephobia.com/result?p=next-auth-example">
-        <img src="https://img.shields.io/bundlephobia/minzip/next-auth?label=next-auth" alt="Bundle Size"/>
-      </a>
-      <a href="https://www.npmtrends.com/next-auth">
-        <img src="https://img.shields.io/npm/dm/next-auth?label=next-auth%20downloads" alt="Downloads" />
-      </a>
-      <a href="https://npm.im/next-auth">
-        <img src="https://img.shields.io/badge/npm-TypeScript-blue" alt="TypeScript" />
-      </a>
-   </p>
-</p>
+## Introduction
 
-## Overview
+This is a learning + demo project built for job application at Dynamic.xyz that runs on sepolia test network.
+It's a simple single page app + API that allows you to login with Dynamic and then create and manage
+multiple custodial wallets. You can:
+- Create wallets
+- Update wallet's personal alias and description
+- Sign Messages
+- Send Transactions
+- Share wallets (either read-only or allowing signature)
 
-NextAuth.js is a complete open source authentication solution.
+## Security considerations
 
-This is an example application that shows how `next-auth` is applied to a basic Next.js app.
+Private keys are being stored as plain text on a serverless database. Of course this is not advised for a
+real world implementation of this kind of product, where handling and storing private keys should be done
+under much better security measures and following proper standards. As this was just a test project,
+implementing such barriers were outside of the scope of the task.
 
-The deployed version can be found at [`next-auth-example.vercel.app`](https://next-auth-example.vercel.app)
+## Testing
 
-### About NextAuth.js
+TBD
 
-NextAuth.js is an easy to implement, full-stack (client/server) open source authentication library originally designed for [Next.js](https://nextjs.org) and [Serverless](https://vercel.com). Our goal is to [support even more frameworks](https://github.com/nextauthjs/next-auth/issues/2294) in the future.
+## Architecture decisions
 
-Go to [next-auth.js.org](https://authjs.dev) for more information and documentation.
+As I don't have a previous blockchain background, I decided to learn the basics by using Dynamic.xyz SDK,
+as that would be more useful in case I got hired. For that reason I started from
+the [NextAuth & Dynamic](https://docs.dynamic.xyz/guides/frameworks/next-auth) guide and cloning
+the [dynamic-labs/nextAuth-example](https://github.com/dynamic-labs/nextAuth-example) project.
+When cloning the project I found out it was not working properly so I had to first understand and fix the
+issue. Later on, I continued with implementing the challenge while trying to stick as much as possible
+to the specifications of the Take Home. I build a simple API architecture following REST principle but
+implementing only the requested actions:
+- `GET /api/wallets` List all available wallets for current user
+- `POST /api/wallets` Creates a new wallet
+- `POST /api/wallets/[address]/sendTransaction` Transfers an amount to a receiver wallet
+- `GET /api/wallets/[address]/signMessage` Signs a message and return the signature
 
-> _NextAuth.js is not officially associated with Vercel or Next.js._
+Besides the API, I implemented the UI by using server actions, which are the recommended Next.js way to
+handle this kind of tasks.
 
-## Getting Started
+For the dabatase, I created a simple structure consisting in two tables:
+- `wallets`: Store address, private key, and audit timestamps.
+- `wallet_access`: With `address`+`user_email` as primary key, it links the wallets to the users, allowing
+to share a wallet. I also included `alias` and `description` as part of this table, to enable different
+users to have a different alias for the same shared wallet. For example, I could call it: `My shared wallet`
+and somebody else could call that same wallet `Gonzalo's wallet`. This table also has an `access_rights`
+array field that allows to scalate to a granular level of permissions. However, right now I've only
+implemented 3 kind of access rights:
+  - `reader`: They can see the wallet on their list and update it's own alias/description for that wallet.
+  - `signer`: All above + can sign message or send transactions.
+  - `owner`: All above + can decide to share the account and set permissions.
 
-### 1. Clone the repository and install dependencies
+I've not used an ORM, wich is probably not ideal, but with this really simple and small DB schema and a
+limited amount of time it was not worthy to implement a whole ORM, so I just used prepared statements
+through tagged template literals.
 
-```
-git clone https://github.com/nextauthjs/next-auth-example.git
-cd next-auth-example
-npm install
-```
+## Other considerations
 
-### 2. Configure your local environment
-
-Copy the .env.local.example file in this directory to .env.local (which will be ignored by Git):
-
-```
-cp .env.local.example .env.local
-```
-
-Add details for one or more providers (e.g. Google, Twitter, GitHub, Email, etc).
-
-#### Database
-
-A database is needed to persist user accounts and to support email sign in. However, you can still use NextAuth.js for authentication without a database by using OAuth for authentication. If you do not specify a database, [JSON Web Tokens](https://jwt.io/introduction) will be enabled by default.
-
-You **can** skip configuring a database and come back to it later if you want.
-
-For more information about setting up a database, please check out the following links:
-
-- Docs: [authjs.dev/reference/core/adapters](https://authjs.dev/reference/core/adapters)
-
-### 3. Configure Authentication Providers
-
-1. Review and update options in `auth.ts` as needed.
-
-2. When setting up OAuth, in the developer admin page for each of your OAuth services, you should configure the callback URL to use a callback path of `{server}/api/auth/callback/{provider}`.
-
-e.g. For Google OAuth you would use: `http://localhost:3000/api/auth/callback/google`
-
-A list of configured providers and their callback URLs is available from the endpoint `api/auth/providers`. You can find more information at https://authjs.dev/getting-started/providers/oauth-tutorial
-
-1. You can also choose to specify an SMTP server for passwordless sign in via email.
-
-### 4. Start the application
-
-To run your site locally, use:
-
-```
-npm run dev
-```
-
-To run it in production mode, use:
-
-```
-npm run build
-npm run start
-```
-
-### 5. Preparing for Production
-
-Follow the [Deployment documentation](https://authjs.dev/getting-started/deployment)
-
-## Acknowledgements
-
-<a href="https://vercel.com?utm_source=nextauthjs&utm_campaign=oss">
-<img width="170px" src="https://raw.githubusercontent.com/nextauthjs/next-auth/main/docs/static/img/powered-by-vercel.svg" alt="Powered By Vercel" />
-</a>
-<p align="left">Thanks to Vercel sponsoring this project by allowing it to be deployed for free for the entire NextAuth.js Team</p>
-
-## License
-
-ISC
+As this is just a sample project and I'm already behind schedule, there are multiple missing features,
+i.e. you can't update or remove access right once you shared the wallet. Of course this is not suitable
+for real world scenario, but I didn't wanted to keep delaying the submit of the take home. The same
+applies to the UI, which is really basic and uses `prompt`, `confirm` and `alert` boxes instead of proper
+styled popup components, but as I'm applying for a backend position I decided to don't spend extra time
+on improving the UX and just focus on being able to fulfill all required features.
