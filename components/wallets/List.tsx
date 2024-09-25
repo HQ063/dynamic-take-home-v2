@@ -8,6 +8,7 @@ import { Loader, Plus, RefreshCcw } from "lucide-react";
 import { EditableField } from "./EditableField";
 import { SendTransactionButton } from "./SendTransactionButton";
 import { SignMessageButton } from "./SignMessageButton";
+import { ShareWalletButton } from "./ShareWalletButton";
 
 export const List = () => {
   const { data, error, isLoading, isValidating, mutate } = useSWR(`/api/wallets`, fetcher);
@@ -48,6 +49,7 @@ export const List = () => {
                     <SignMessageButton wallet={wallet} mutate={mutate} />
                   </>
                 }
+                {wallet.access_rights.includes('owner') && <ShareWalletButton wallet={wallet} />}
               </td>
             </tr>
           ))
