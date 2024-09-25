@@ -21,6 +21,7 @@
   "dependencies": {
     "@dynamic-labs/ethereum": "*",
     "@dynamic-labs/sdk-react-core": "*",
+    "@neondatabase/serverless": "^0.9.5",
     "@radix-ui/react-avatar": "^1.0.3",
     "@radix-ui/react-collapsible": "^1.0.3",
     "@radix-ui/react-dropdown-menu": "^2.0.5",
@@ -35,8 +36,10 @@
     "next-auth": "beta",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "swr": "^2.2.5",
     "tailwind-merge": "^1.14.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "viem": "^2.21.14"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.5",
