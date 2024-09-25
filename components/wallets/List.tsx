@@ -7,6 +7,7 @@ import { createWallet } from "@/app/actions/createWallet";
 import { Loader, Plus, RefreshCcw } from "lucide-react";
 import { EditableField } from "./EditableField";
 import { SendTransactionButton } from "./SendTransactionButton";
+import { SignMessageButton } from "./SignMessageButton";
 
 export const List = () => {
   const { data, error, isLoading, isValidating, mutate } = useSWR(`/api/wallets`, fetcher);
@@ -44,6 +45,7 @@ export const List = () => {
               <td className="py-3 px-3 text-center">
                 {canSign(wallet.access_rights) && <>
                     <SendTransactionButton wallet={wallet} mutate={mutate} />
+                    <SignMessageButton wallet={wallet} mutate={mutate} />
                   </>
                 }
               </td>
