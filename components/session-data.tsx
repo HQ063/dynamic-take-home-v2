@@ -18,7 +18,7 @@ export default function SessionData({ session }: { session: Session | null }) {
             the page to avoid exposing sensitive information.
           </p>
         )}
-        <pre>{JSON.stringify(session, null, 2)}</pre>
+        <pre>{session?.user.email}</pre>
       </div>
     )
   }
