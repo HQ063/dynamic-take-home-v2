@@ -9,11 +9,11 @@ import SessionData from "./session-data";
 import CustomLink from "./custom-link";
 
 const UpdateForm = () => {
-  const { user } = useDynamicContext();
+  const { user, sdkHasLoaded } = useDynamicContext();
   const { data: session, update } = useSession();
 
   useEffect(() => {
-    if (!user && session?.user) {
+    if (sdkHasLoaded && !user && session?.user) {
       signOut();
     }
   }, [user, session]);

@@ -9,7 +9,6 @@ type User = {
   id: string;
   name: string;
   email: string;
-  // Add other fields as needed
 };
 
 export const config = {
@@ -31,7 +30,6 @@ export const config = {
           throw new Error("Token is required");
         }
         const jwtPayload = await validateJWT(token);
-
         if (jwtPayload) {
           // Transform the JWT payload into your user object
           const user: User = {
