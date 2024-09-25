@@ -3,7 +3,9 @@
 import { fetcher } from "@/lib/utils";
 import useSWR from "swr";
 import { Button } from "../ui/button";
-import { Loader, RefreshCcw } from "lucide-react";
+import { createWallet } from "@/app/actions/createWallet";
+import { Loader, Plus, RefreshCcw } from "lucide-react";
+import { EditableField } from "./EditableField";
 
 export const List = () => {
   const { data, error, isLoading, isValidating, mutate } = useSWR(`/api/wallets`, fetcher);
@@ -26,10 +28,10 @@ export const List = () => {
           data.wallets.map((wallet: any) => (
             <tr key={wallet.address} className="border-b border-gray-200 vertical-align-middle">
               <td className="py-3 px-3">
-                <span className="h-10 items-center inline-flex">{wallet.alias}</span>
+                <EditableField field='alias' wallet={wallet} mutate={mutate} />
               </td>
               <td className="py-3 px-3">
-                <span className="h-10 items-center inline-flex">{wallet.description}</span>
+                <EditableField field='description' wallet={wallet} mutate={mutate} />
               </td>
               <td className="py-3 px-3 text-center">{wallet.address}</td>
               <td className="py-3 px-3 text-center">{wallet.balance}</td>
