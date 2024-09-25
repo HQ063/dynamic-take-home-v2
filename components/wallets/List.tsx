@@ -6,9 +6,14 @@ import { Button } from "../ui/button";
 import { createWallet } from "@/app/actions/createWallet";
 import { Loader, Plus, RefreshCcw } from "lucide-react";
 import { EditableField } from "./EditableField";
+import { SendTransactionButton } from "./SendTransactionButton";
 
 export const List = () => {
   const { data, error, isLoading, isValidating, mutate } = useSWR(`/api/wallets`, fetcher);
+
+  function canSign(accessRights: string[]) {
+    return accessRights.includes('owner') || accessRights.includes('signer')
+  }
 
   return <>
     <h2 className="flex justify-between text-xl font-bold">Available Wallets</h2>
@@ -21,6 +26,7 @@ export const List = () => {
           <th className="py-4">Description</th>
           <th className="py-4">Address</th>
           <th className="py-4">Balance</th>
+          <th className="py-4">Actions</th>
         </tr>
       </thead>
       <tbody className="bg-gray-50">
@@ -35,6 +41,12 @@ export const List = () => {
               </td>
               <td className="py-3 px-3 text-center">{wallet.address}</td>
               <td className="py-3 px-3 text-center">{wallet.balance}</td>
+              <td className="py-3 px-3 text-center">
+                {canSign(wallet.access_rights) && <>
+                    <SendTransactionButton wallet={wallet} mutate={mutate} />
+                  </>
+                }
+              </td>
             </tr>
           ))
         )}
