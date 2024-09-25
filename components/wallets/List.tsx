@@ -40,6 +40,10 @@ export const List = () => {
     </table>
     <div className="flex align-center mt-4 gap-4">
       <Button onClick={() => mutate()}><RefreshCcw className="mr-2" /> Refresh</Button>
+      <Button onClick={async () => {
+        await createWallet()
+        mutate()
+      }}><Plus className="mr-2" />Create Wallet</Button>
     </div>
   </>
 }

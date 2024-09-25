@@ -19,3 +19,9 @@ export const GET = async (req: Request) => {
     return Response.json({ message: "No wallet found" }, { status: 404 });
   }
 }
+
+export const POST = async (req: Request) => {
+  const wallet = await createWallet()
+
+  return Response.json({ wallet });
+}
